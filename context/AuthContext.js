@@ -1,24 +1,57 @@
-import { createContext, useContext, useState } from 'react'; // [cite: 140]
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AuthContext = createContext(undefined); // [cite: 141-142]
+const AuthContext = createContext(undefined);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // [cite: 143-144]
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Yükleme durumu
 
-  const login = (username) => setUser({ username }); // [cite: 145]
-  const logout = () => setUser(null); // [cite: 146]
+  // 1. Uygulama açıldığında hafızadaki kullanıcıyı yükle
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (e) {
+        console.error("Kullanıcı yüklenemedi", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadUser();
+  }, []);
+
+  // 2. Kullanıcı her değiştiğinde (giriş/çıkış) hafızayı güncelle
+  useEffect(() => {
+    const saveUser = async () => {
+      try {
+        if (user) {
+          await AsyncStorage.setItem('user', JSON.stringify(user));
+        } else {
+          await AsyncStorage.removeItem('user');
+        }
+      } catch (e) {
+        console.error("Kullanıcı kaydedilemedi", e);
+      }
+    };
+    saveUser();
+  }, [user]);
+
+  const login = (username) => setUser({ username });
+  const logout = () => setUser(null);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
-  ); // [cite: 147-150]
+  );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext); // [cite: 152-153]
-  if (!context) {
-    throw new Error('useAuth must be used inside AuthProvider'); // [cite: 157]
-  }
-  return context; // [cite: 158]
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used inside AuthProvider');
+  return context;
 }
