@@ -1,13 +1,16 @@
-import React, { useState } from 'react'; // [cite: 101]
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'; // [cite: 102]
+import React, { useState } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { useAuth } from '../context/AuthContext'; // Context'i içe aktar
 
-export default function LoginScreen({ navigation }) { // [cite: 103]
-  const [username, setUsername] = useState(''); // [cite: 103, 106]
+export default function LoginScreen({ navigation }) {
+  const [username, setUsername] = useState('');
+  const { login } = useAuth(); // login fonksiyonunu çek 
 
-  const handleLogin = () => { // [cite: 104]
-    if (!username.trim()) return; // Boş giriş kontrolü [cite: 105]
-    navigation.replace('Home', { username }); // Home ekranına username ile git [cite: 107]
-  }; // [cite: 108]
+  const handleLogin = () => {
+    if (!username.trim()) return;
+    login(username); // Global state'i güncelle [cite: 145, 169]
+    navigation.replace('Home'); // Artık param göndermeye gerek yok [cite: 167]
+  };
 
   return (
     <View style={styles.container}>

@@ -1,17 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native'; // [cite: 126]
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useAuth } from '../context/AuthContext'; // Context'i içe aktar
 
-export default function HomeScreen({ route }) { // [cite: 127]
-  const { username } = route.params; // Login'den gönderilen veriyi al [cite: 129]
+export default function HomeScreen({ navigation }) {
+  const { user, logout } = useAuth(); // Kullanıcıyı ve çıkış fonksiyonunu al [cite: 168, 169]
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome, {username}</Text> 
+      <Text style={styles.text}>Welcome, {user?.username}</Text>
+      <Pressable 
+        style={styles.settingsButton} 
+        onPress={() => navigation.navigate('Settings')}
+      >
+        <Text style={styles.buttonText}>Go to Settings</Text>
+      </Pressable>
+      <Pressable style={styles.logoutButton} onPress={logout}>
+        <Text style={styles.buttonText}>Logout</Text>
+      </Pressable>
     </View>
-  ); // [cite: 130]
+  );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 20 }
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20 },
+  text: { fontSize: 22, fontWeight: 'bold' },
+  settingsButton: { backgroundColor: '#34C759', padding: 15, borderRadius: 5, width: '80%' },
+  logoutButton: { backgroundColor: '#FF3B30', padding: 15, borderRadius: 5, width: '80%' },
+  buttonText: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
 });
