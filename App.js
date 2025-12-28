@@ -1,19 +1,22 @@
-import { NavigationContainer } from '@react-navigation/native'; // [cite: 73]
-import { createNativeStackNavigator } from '@react-navigation/native-stack'; // [cite: 74-75]
-import LoginScreen from './screens/LoginScreen'; // [cite: 76]
-import HomeScreen from './screens/HomeScreen'; // [cite: 77]
-import SettingsScreen from './screens/SettingsScreen'; // [cite: 78]
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AuthProvider } from './context/AuthContext'; // Bunu ekledik
+import LoginScreen from './screens/LoginScreen';
+import HomeScreen from './screens/HomeScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
-const Stack = createNativeStackNavigator(); // [cite: 79-80]
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-} // [cite: 81-90]
+    <AuthProvider> 
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
+  ); // [cite: 161-165]
+}
